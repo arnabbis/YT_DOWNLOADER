@@ -1,0 +1,16 @@
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .result-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .topbar { flex-direction: column; gap: 0.75rem; }
+  .url-box { flex-direction: column; border-radius: 20px; }
+  .trim-grid { grid-template-columns: 1fr; }
+  .preview-header { flex-direction: column; gap: 0.35rem; }
+  .progress-item-head { flex-direction: column; }
+  .progress-actions { justify-content: flex-start; }
+  .hero { padding: 1.25rem; }
+  .results, .progress-panel, .faq, .footer { padding: 1.2rem; }
+}

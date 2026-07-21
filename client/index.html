@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaTube Downloader</title>
+    <meta name="description" content="Premium YouTube download and conversion experience with analytics, trimming, queueing, and progress tracking." />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+  </head>
+  <body>
+    <div class="background-orb orb-a"></div>
+    <div class="background-orb orb-b"></div>
+
+    <header class="topbar">
+      <a class="brand" href="#">NovaTube</a>
+      <nav class="topbar-nav">
+        <a href="#features">Features</a>
+        <a href="#faq">FAQ</a>
+        <button id="themeToggle" class="ghost-btn">🌙</button>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="hero glass-card">
+        <div class="hero-copy">
+          <p class="eyebrow">AI-powered media delivery</p>
+          <h1>Download, trim, and transform YouTube content with premium control.</h1>
+          <p class="hero-text">Analyze any video instantly, browse available formats, and download polished files with queueing and progress tracking built in.</p>
+          <div id="analyzeForm" class="url-box">
+            <input id="urlInput" type="text" placeholder="Paste YouTube URL here..." autocomplete="off" />
+            <button id="analyzeBtn" type="button" class="primary-btn">Analyze</button>
+          </div>
+          <div class="hero-actions">
+            <button class="ghost-btn" id="pasteBtn">Paste from clipboard</button>
+            <button class="ghost-btn" id="dropZoneTrigger">Drag & Drop URL</button>
+          </div>
+          <div id="analysisProgress" class="analysis-progress" hidden aria-live="polite">
+            <div class="analysis-progress-head">
+              <span id="analysisStatus">Starting analysis...</span>
+              <strong id="analysisPercent">0%</strong>
+            </div>
+            <div class="progress-bar analysis-bar">
+              <span id="analysisProgressFill" style="width:0%"></span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-panel glass-card">
+          <div class="metric-grid">
+            <div class="metric">
+              <strong id="metricTitle">Instant analysis</strong>
+              <span>metadata + formats</span>
+            </div>
+            <div class="metric">
+              <strong>Queue-safe</strong>
+              <span>multi-download workflow</span>
+            </div>
+            <div class="metric">
+              <strong>Trim ready</strong>
+              <span>FFmpeg processing</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="features-grid">
+        <article class="glass-card feature-card">
+          <h3>Visual previews</h3>
+          <p>Preview the source content before you export.</p>
+        </article>
+        <article class="glass-card feature-card">
+          <h3>Smart quality picks</h3>
+          <p>Choose your target resolution or bitrate from available streams.</p>
+        </article>
+        <article class="glass-card feature-card">
+          <h3>Secure workflow</h3>
+          <p>Protected endpoints, safe file handling, and automatic cleanup.</p>
+        </article>
+      </section>
+
+      <section class="results glass-card" id="resultsPanel" hidden>
+        <div class="results-header">
+          <div>
+            <p class="eyebrow">Discovery ready</p>
+            <h2 id="resultTitle">Video details</h2>
+          </div>
+          <button id="copyTitleBtn" class="ghost-btn">Copy title</button>
+        </div>
+        <div class="result-layout">
+          <img id="resultThumbnail" class="result-thumb" alt="Video thumbnail" />
+          <div class="result-meta">
+            <p><strong>Channel:</strong> <span id="resultChannel"></span></p>
+            <p><strong>Duration:</strong> <span id="resultDuration"></span></p>
+            <p><strong>Views:</strong> <span id="resultViews"></span></p>
+            <p><strong>Upload Date:</strong> <span id="resultUploadDate"></span></p>
+            <p><strong>Description:</strong> <span id="resultDescription"></span></p>
+          </div>
+        </div>
+        <div id="sourcePreviewPanel" class="source-preview" hidden>
+          <div class="preview-header">
+            <strong id="previewTitle">Preview</strong>
+            <span id="previewRangeLabel"></span>
+          </div>
+          <div class="preview-frame-wrap" id="previewFrameWrap">
+            <div id="previewLoading" class="preview-loading" hidden aria-live="polite">Building preview...</div>
+            <video id="sourcePreviewVideo" class="preview-media" controls playsinline hidden></video>
+            <audio id="sourcePreviewAudio" class="preview-audio" controls hidden></audio>
+          </div>
+        </div>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="video">Video</button>
+          <button class="tab" data-tab="audio">Audio</button>
+        </div>
+        <div class="tab-panel" id="videoTab">
+          <label class="field-label">Video quality</label>
+          <select id="qualitySelect" class="select"></select>
+          <label class="trim-toggle"><input id="trimVideo" type="checkbox" /> Crop / trim this download</label>
+          <div class="trim-grid">
+            <label>Start time<input id="videoStart" type="text" value="00:00:00" inputmode="numeric" disabled /></label>
+            <label>End time<input id="videoEnd" type="text" placeholder="00:00:30" inputmode="numeric" disabled /></label>
+          </div>
+          <div class="actions-row">
+            <button id="downloadVideoBtn" class="primary-btn">Download video</button>
+            <button id="previewVideoBtn" class="ghost-btn">Preview</button>
+          </div>
+        </div>
+        <div class="tab-panel" hidden id="audioTab">
+          <label class="field-label">Audio bitrate</label>
+          <select id="bitrateSelect" class="select">
+            <option value="source">Original audio (fastest)</option>
+            <option value="128k">128 kbps</option>
+            <option value="192k">192 kbps</option>
+            <option value="256k">256 kbps</option>
+            <option value="320k">320 kbps</option>
+          </select>
+          <label class="trim-toggle"><input id="trimAudio" type="checkbox" /> Crop / trim this download</label>
+          <div class="trim-grid">
+            <label>Start time<input id="audioStart" type="text" value="00:00:00" inputmode="numeric" disabled /></label>
+            <label>End time<input id="audioEnd" type="text" placeholder="00:00:30" inputmode="numeric" disabled /></label>
+          </div>
+          <div class="actions-row">
+            <button id="downloadAudioBtn" class="primary-btn">Download audio</button>
+            <button id="previewAudioBtn" class="ghost-btn">Preview</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="glass-card progress-panel">
+        <div class="results-header">
+          <div>
+            <p class="eyebrow">Download workspace</p>
+            <h2>Queue and progress</h2>
+          </div>
+          <button id="clearHistoryBtn" class="ghost-btn">Clear history</button>
+        </div>
+        <div id="progressList" class="progress-list"></div>
+      </section>
+
+      <section id="faq" class="faq glass-card">
+        <h2>Frequently asked questions</h2>
+        <details open>
+          <summary>Is this safe to use?</summary>
+          <p>Yes. The backend validates input, strips unsafe characters, and keeps downloads isolated in temporary folders.</p>
+        </details>
+        <details>
+          <summary>Can I trim before download?</summary>
+          <p>Absolutely. Both video and audio downloads can be clipped using FFmpeg-based trimming controls.</p>
+        </details>
+        <details>
+          <summary>What kinds of links are supported?</summary>
+          <p>YouTube links from youtube.com and youtu.be are validated before analysis begins.</p>
+        </details>
+        <details>
+          <summary>Can I download any YouTube video?</summary>
+          <p>Only download videos you own or are authorized to save, and follow YouTube's terms and local copyright rules.</p>
+        </details>
+      </section>
+    </main>
+
+    <footer class="footer glass-card">
+      <span>© 2026 NovaTube. Crafted for creators and curious minds.</span>
+    </footer>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/download.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

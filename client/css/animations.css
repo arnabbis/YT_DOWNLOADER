@@ -1,0 +1,6 @@
+.fade-in { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.ripple { position: relative; overflow: hidden; }
+.ripple::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.2); border-radius: inherit; transform: scale(0); opacity: 0; transition: transform 0.35s ease, opacity 0.35s ease; }
+.ripple:active::after { transform: scale(2); opacity: 1; }
